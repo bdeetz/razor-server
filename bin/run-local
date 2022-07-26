@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -Eeo pipefail
-set +x
+set -x
+
+export PGDATA="/var/lib/postgresql/data"
+export POSTGRES_USER="postgres"
+export POSTGRES_PASSWORD="razor"
 
 # TODO swap to -Eeuo pipefail above (after handling all potentially-unset variables)
 
@@ -242,16 +246,16 @@ pg_setup_hba_conf() {
 	fi
 	local auth
 	# check the default/configured encryption and use that as the auth method
-	auth="$(postgres -C password_encryption "$@")"
-	: "${POSTGRES_HOST_AUTH_METHOD:=$auth}"
-	{
-		echo
-		if [ 'trust' = "$POSTGRES_HOST_AUTH_METHOD" ]; then
-			echo '# warning trust is enabled for all connections'
-			echo '# see https://www.postgresql.org/docs/12/auth-trust.html'
-		fi
-		echo "host all all all $POSTGRES_HOST_AUTH_METHOD"
-	} >> "$PGDATA/pg_hba.conf"
+	#auth="$(postgres -C password_encryption "$@")"
+	#: "${POSTGRES_HOST_AUTH_METHOD:=$auth}"
+	#{
+	#	echo
+	#	if [ 'trust' = "$POSTGRES_HOST_AUTH_METHOD" ]; then
+	#		echo '# warning trust is enabled for all connections'
+	#		echo '# see https://www.postgresql.org/docs/12/auth-trust.html'
+	#	fi
+	#	echo "host all all all $POSTGRES_HOST_AUTH_METHOD"
+	#} >> "$PGDATA/pg_hba.conf"
 }
 
 # start socket-only postgresql server for setting up or running scripts
@@ -267,7 +271,6 @@ docker_temp_server_start() {
 
 	PGUSER="${PGUSER:-$POSTGRES_USER}" \
 	pg_ctl -D "$PGDATA" \
-		-o "$(printf '%q ' "$@")" \
 		-w start
 }
 
@@ -308,7 +311,7 @@ _main() {
 		docker_verify_minimum_env
 
 		# check dir permissions to reduce likelihood of half-initialized database
-		ls /docker-entrypoint-initdb.d/ > /dev/null
+		#ls /docker-entrypoint-initdb.d/ > /dev/null
 
 		docker_init_database_dir
 		pg_setup_hba_conf "$@"
@@ -319,10 +322,10 @@ _main() {
 		docker_temp_server_start "$@"
 
 		docker_setup_db
-		docker_process_init_files /docker-entrypoint-initdb.d/*
+		#docker_process_init_files /docker-entrypoint-initdb.d/*
 
-		docker_temp_server_stop
-		unset PGPASSWORD
+		#docker_temp_server_stop
+		#unset PGPASSWORD
 
 		echo
 		echo 'PostgreSQL init process complete; ready for start up.'
@@ -332,16 +335,20 @@ _main() {
 		echo 'PostgreSQL Database directory appears to contain a database; Skipping initialization'
 		echo
 	fi
+}
 
-	exec "$@"
+if ! _is_sourced; then
+	_main "$@"
 
         # A script for running the Razor server, i.e. as a development environment.
         # This will: download the microkernel, migrate the database, deploy
         # the app to torquebox, install the razor-client, then start torquebox.
-        
-        set -e
-        set -x
-        
+        createuser razor
+        psql -c "CREATE DATABASE razor"
+        #psql -c "CREATE USER razor WITH ENCRYPTED PASSWORD 'razor'; GRANT ALL PRIVILEGES ON DATABASE razor TO razor;"
+        psql -c "GRANT ALL PRIVILEGES ON DATABASE razor TO razor;"
+        #psql -c "CREATE USER razor WITH ENCRYPTED PASSWORD 'razor'"
+
         printf "ensuring microkernel is in place"
         if [ ! -e /var/lib/razor/repo-store/microkernel ]
         then
@@ -358,8 +365,7 @@ _main() {
         # Deploy and start torquebox
         (cd $(dirname $0)/..; torquebox deploy)
         torquebox run -b 0.0.0.0 --port 8150
-}
 
-if ! _is_sourced; then
-	_main "$@"
+        # catch all for exec'd commands
+        exec "$@"
 fi
