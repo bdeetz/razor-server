@@ -1,4 +1,4 @@
-FROM jruby:9.1.5.0-alpine
+FROM jruby:9.2-alpine
 
 # throw errors if Gemfile has been modified since Gemfile.lock
 RUN bundle config --global frozen 1
@@ -7,7 +7,8 @@ WORKDIR /usr/src/app
 
 COPY Gemfile Gemfile.lock ./
 # upgrade bundler and install gems
-RUN gem install bundler && bundle install
+RUN gem install bundler
+RUN bundle install
 
 COPY app.rb .
 COPY config.yaml.docker .
@@ -36,5 +37,22 @@ RUN apk update && apk --update add openssl && apk --update add libarchive-dev
 
 # For debugging.
 RUN apk add vim
+
+# install the microkernel
+RUN mkdir -p /var/lib/razor/repo-store
+WORKDIR /var/lib/razor/repo-store
+
+# wget -c -O microkernel.tar https://pup.pt/razor-microkernel-latest
+# Download from brady instead of puppet because brady is muuuuuch faster
+RUN wget --no-check-certificate -c -O microkernel.tar https://owncloud.tech-hell.com:8444/index.php/s/icOQ8tAvDvsi8GI/download
+RUN tar -xvf microkernel.tar
+
+WORKDIR /usr/src/app
+
+# install postgresql
+RUN apk add postgresql
+
+# create a persistent volume for postgres data
+VOLUME /var/lib/postgresql/data
 
 ENTRYPOINT ["/usr/src/app/bin/run-local"]
