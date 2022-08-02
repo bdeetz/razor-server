@@ -301,6 +301,12 @@ _main() {
 	docker_setup_env
 	# setup data directories and permissions (when run as root)
 	docker_create_db_directories
+
+        #strace /usr/sbin/in.tftpd -L -s /var/lib/razor/repo-store/ -p --verbosity 4 -v --port-range 65400:65515&
+        #strace /usr/sbin/in.tftpd -L -s /var/lib/razor/repo-store/ -p --verbosity 4 -v&
+        #strace /usr/sbin/in.tftpd -L -s /var/lib/razor/repo-store/ -p --create --verbosity 4 -v&
+        strace /usr/sbin/in.tftpd -L -s /var/tftpboot&
+
 	if [ "$(id -u)" = '0' ]; then
 		# then restart script as postgres user
 		exec gosu postgres "$BASH_SOURCE" "$@"
@@ -356,15 +362,15 @@ if ! _is_sourced; then
             wget -c -O microkernel.tar https://pup.pt/razor-microkernel-latest
             tar -xvf microkernel.tar
         fi
-        
+
+        #/usr/sbin/in.tftpd -l -s /var/lib/razor/repo-store/ -u postgres -p
+
         # Migrate the database.
         $(dirname $0)/razor-admin migrate-database
-        
-        gem install razor-client
-        
+
         # Deploy and start torquebox
-        (cd $(dirname $0)/..; torquebox deploy)
-        torquebox run -b 0.0.0.0 --port 8150
+        #(cd $(dirname $0)/..; torquebox deploy)
+        #torquebox run -b 0.0.0.0 --port 8150
 
         # catch all for exec'd commands
         exec "$@"

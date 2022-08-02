@@ -1,7 +1,7 @@
 ---
 
 all:
-  database_url: 'jdbc:postgresql://razor-postgres:5432/razor?user=razor&password=razor'
+  database_url: 'jdbc:postgresql://localhost:5432/razor?user=razor&password='
   auth:
     enabled: false
     config: shiro.ini

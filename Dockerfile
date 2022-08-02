@@ -1,5 +1,9 @@
 FROM jruby:9.2-alpine
 
+# BE SURE TO FORWARD THESE
+EXPOSE 69/udp
+EXPOSE 8150/tcp
+
 # install postgresql
 RUN apk add postgresql postgresql-client
 
@@ -94,7 +98,21 @@ RUN  curl -o /usr/local/bin/su-exec.c https://raw.githubusercontent.com/ncopa/su
      && chmod 0755 /usr/local/bin/su-exec \
      && rm /usr/local/bin/su-exec.c
 
+# install tftp server
+RUN apk add tftp-hpa
+RUN apk add strace
+
+# configure tftp server
+COPY in.tftpd.docker .
+RUN mv in.tftpd.docker /etc/conf.d/in.tftpd
+
+RUN rm -rf /var/tftpboot && ln -s /var/lib/razor/repo-store /var/tftpboot && chown -R postgres:postgres /var/tftpboot
+
 USER postgres
+
+# install razor client
+RUN gem install faraday -v 1.10.0
+RUN gem install razor-client
 
 # create a persistent volume for postgres data
 VOLUME /var/lib/postgresql/data
@@ -105,7 +123,8 @@ RUN mv config.yaml.docker config.yaml
 
 USER root
 RUN chmod +x bin/*
-RUN adduser -S razor
+RUN addgroup -S razor
+RUN adduser -G razor -D razor
 RUN echo "razor:razor" | chpasswd
 
 USER postgres
