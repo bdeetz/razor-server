@@ -117,11 +117,10 @@ RUN gem install razor-client
 # create a persistent volume for postgres data
 VOLUME /var/lib/postgresql/data
 
+USER root
 COPY bin ./bin
 COPY config.yaml.docker .
 RUN mv config.yaml.docker config.yaml
-
-USER root
 RUN chmod +x bin/*
 RUN addgroup -S razor
 RUN adduser -G razor -D razor

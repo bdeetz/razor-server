@@ -302,9 +302,6 @@ _main() {
 	# setup data directories and permissions (when run as root)
 	docker_create_db_directories
 
-        #strace /usr/sbin/in.tftpd -L -s /var/lib/razor/repo-store/ -p --verbosity 4 -v --port-range 65400:65515&
-        #strace /usr/sbin/in.tftpd -L -s /var/lib/razor/repo-store/ -p --verbosity 4 -v&
-        #strace /usr/sbin/in.tftpd -L -s /var/lib/razor/repo-store/ -p --create --verbosity 4 -v&
         strace /usr/sbin/in.tftpd -L -s /var/tftpboot&
 
 	if [ "$(id -u)" = '0' ]; then
