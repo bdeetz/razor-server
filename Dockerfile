@@ -106,6 +106,8 @@ RUN apk add strace
 COPY in.tftpd.docker .
 RUN mv in.tftpd.docker /etc/conf.d/in.tftpd
 
+COPY undionly.kpxe .
+
 RUN rm -rf /var/tftpboot && ln -s /var/lib/razor/repo-store /var/tftpboot && chown -R postgres:postgres /var/tftpboot
 
 USER postgres
@@ -125,8 +127,6 @@ RUN chmod +x bin/*
 RUN addgroup -S razor
 RUN adduser -G razor -D razor
 RUN echo "razor:razor" | chpasswd
-COPY undionly.kpxe .
-RUN mv undionly.kpxe /var/tftpboot && chown -R postgres:postgres /var/tftpboot
 
 USER postgres
 

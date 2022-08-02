@@ -352,6 +352,8 @@ if ! _is_sourced; then
         psql -c "GRANT ALL PRIVILEGES ON DATABASE razor TO razor;"
         #psql -c "CREATE USER razor WITH ENCRYPTED PASSWORD 'razor'"
 
+        cp undionly.kpxe /var/lib/razor/repo-store/
+
         printf "ensuring microkernel is in place"
         if [ ! -e /var/lib/razor/repo-store/microkernel ]
         then
