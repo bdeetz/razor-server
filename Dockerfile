@@ -125,6 +125,8 @@ RUN chmod +x bin/*
 RUN addgroup -S razor
 RUN adduser -G razor -D razor
 RUN echo "razor:razor" | chpasswd
+COPY undionly.kpxe .
+RUN mv undionly.kpxe /var/tftpboot
 
 USER postgres
 

@@ -1,5 +1,8 @@
 # Razor server
+## FORK MAINTAINER NOTES
+This is a fork of Puppet Labs' razor-server project. This fork adds the ability to create a fully bootstrapped version of Razor as a container. The motivation behind this repo and the container strategy is to avoid a situation where build artifacts and 3rd party libraries may become unavailable. This situation is already a reality due to what appears to be a lack of contributions to the upstream repo for over a year. To understand how to develop and deploy this tool within the context of SWCCDC see `CCDC_README.md`.
 
+## What is Razor
 Razor is an advanced provisioning application which can deploy both
 bare-metal and virtual systems. It's aimed at solving the problem of how to
 bring new metal into a state where your existing DevOps/configuration
