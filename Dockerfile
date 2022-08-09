@@ -1,4 +1,4 @@
-FROM jruby:9.2-alpine
+FROM jruby:9.1.6.0-alpine
 
 # BE SURE TO FORWARD THESE
 EXPOSE 69/udp
@@ -19,22 +19,26 @@ COPY Gemfile Gemfile.lock ./
 RUN gem install bundler
 RUN bundle install
 
-COPY app.rb .
-COPY config.ru .
-COPY shiro.ini .
-COPY torquebox.rb .
-COPY Rakefile .
-COPY brokers ./brokers
-COPY db ./db
-COPY hooks ./hooks
-# this seems to be needed
-COPY jars ./jars
-COPY lib ./lib
-COPY locales ./locales
-COPY spec ./spec
-COPY tasks ./tasks
+#COPY app.rb .
+#COPY config.ru .
+#COPY shiro.ini .
+#COPY torquebox.rb .
+#COPY Rakefile .
+#COPY brokers ./brokers
+#COPY db ./db
+#COPY hooks ./hooks
+## this seems to be needed
+#COPY jars ./jars
+#COPY lib ./lib
+#COPY locales ./locales
+#COPY spec ./spec
+#COPY tasks ./tasks
+
+COPY . .
 
 USER root
+
+RUN chown -R postgres:postgres /usr/src/app
 
 RUN mkdir -p /var/lib/razor/repo-store \
     && chmod -R 777 /var/lib/razor/repo-store
@@ -113,7 +117,7 @@ RUN rm -rf /var/tftpboot && ln -s /var/lib/razor/repo-store /var/tftpboot && cho
 USER postgres
 
 # install razor client
-RUN gem install faraday -v 1.10.0
+#RUN gem install faraday -v 1.10.0
 RUN gem install razor-client
 
 # create a persistent volume for postgres data
