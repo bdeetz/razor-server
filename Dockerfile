@@ -5,6 +5,7 @@ EXPOSE 69/udp
 EXPOSE 8150/tcp
 
 # install postgresql
+RUN apk update
 RUN apk add postgresql postgresql-client
 
 USER postgres
@@ -45,7 +46,7 @@ RUN mkdir -p /var/lib/razor/repo-store \
 
 # Install openssl so we can download from HTTPS (e.g. microkernel), plus
 # libarchive (must be "-dev" so we can find the .so files).
-RUN apk update && apk --update add openssl && apk --update add libarchive-dev
+RUN apk update && apk --update add openssl && apk --update add libarchive-dev && apk add curl
 
 # For debugging.
 RUN apk add vim
@@ -57,7 +58,7 @@ WORKDIR /var/lib/razor/repo-store
 
 # wget -c -O microkernel.tar https://pup.pt/razor-microkernel-latest
 # Try to download from brady first instead of puppet because brady is muuuuuch faster
-RUN wget --no-check-certificate -c -O microkernel.tar https://owncloud.tech-hell.com:8444/index.php/s/icOQ8tAvDvsi8GI/download || wget -c -O microkernel.tar https://pup.pt/razor-microkernel-latest
+RUN curl -k https://owncloud.tech-hell.com:8444/index.php/s/icOQ8tAvDvsi8GI/download --output microkernel.tar || wget -c -O microkernel.tar https://pup.pt/razor-microkernel-latest
 RUN tar -xvf microkernel.tar
 
 WORKDIR /usr/src/app
