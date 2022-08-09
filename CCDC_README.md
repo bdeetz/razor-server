@@ -5,6 +5,8 @@ NOTE: This service expects the razor server to be at 192.168.94.3.
       rebuild the container using the instruction below, and restart the puppet-razor
       systemd service.
 
+NOTE: If you are using the CCDC virtual appliance, the appliance expects the first network interface to be a management network with DHCP. The second network interface is used for provisioning and expects to have a static IP configured. As shipped it is 192.168.94.3/24. If you need something else, update netplan and the bootstrap.ipxe and the boostrap.ipxe file mentioned above. These changes will require a rebuild of the container on the appliance using the process described below.
+
 ```
 # NOTE: You can skip this if you are working from the CCDC virtual appliance
 git clone https://github.com/bdeetz/razor-server.git
