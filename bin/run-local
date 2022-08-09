@@ -302,7 +302,7 @@ _main() {
 	# setup data directories and permissions (when run as root)
 	docker_create_db_directories
 
-        strace /usr/sbin/in.tftpd -L -s /var/tftpboot --verbosity 4&
+        strace /usr/sbin/in.tftpd -L -u postgres -s /var/tftpboot --verbosity 4&
 
 	if [ "$(id -u)" = '0' ]; then
 		# then restart script as postgres user

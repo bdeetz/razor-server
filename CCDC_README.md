@@ -1,5 +1,9 @@
 # SWCCDC Puppet Razor Deployment and Development
 ## Installation from a fresh build
+NOTE: This process expects the razor server to be at 192.168.94.3.
+      If the ip address of the razor server is changed, update bootstrap.ipxe,
+      rebuild the container, and restart the puppet-razor systemd service.
+
 ```
 git clone https://github.com/bdeetz/razor-server.git
 

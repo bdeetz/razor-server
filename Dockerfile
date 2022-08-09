@@ -17,7 +17,7 @@ WORKDIR /usr/src/app
 
 COPY Gemfile Gemfile.lock ./
 # upgrade bundler and install gems
-RUN gem install bundler
+RUN gem install bundler -v 1.17.3
 RUN bundle install
 
 #COPY app.rb .
@@ -110,13 +110,15 @@ COPY in.tftpd.docker .
 RUN mv in.tftpd.docker /etc/conf.d/in.tftpd
 
 COPY undionly.kpxe .
+COPY bootstrap.ipxe .
+RUN mv bootstrap.ipxe /var/lib/razor/repo-store/bootstrap.ipxe
 
-RUN rm -rf /var/tftpboot && ln -s /var/lib/razor/repo-store /var/tftpboot && chown -R postgres:postgres /var/tftpboot
+RUN rm -rf /var/tftpboot && ln -s /var/lib/razor/repo-store /var/tftpboot && chown -R postgres:postgres /var/tftpboot && chown -R postgres:postgres /var/lib/razor/repo-store
 
 USER postgres
 
 # install razor client
-#RUN gem install faraday -v 1.10.0
+RUN gem install faraday -v 0.17.4
 RUN gem install razor-client
 
 # create a persistent volume for postgres data
