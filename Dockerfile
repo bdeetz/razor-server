@@ -4,6 +4,12 @@ FROM jruby:9.1.6.0-alpine
 EXPOSE 69/udp
 EXPOSE 8150/tcp
 
+# create a persistent volume for postgres data
+VOLUME /var/lib/postgresql/data
+
+# create a persistent volume for razor data
+VOLUME /var/lib/razor/repo-store
+
 # install postgresql
 RUN apk update
 RUN apk add postgresql postgresql-client
@@ -120,12 +126,6 @@ USER postgres
 # install razor client
 RUN gem install faraday -v 0.17.4
 RUN gem install razor-client
-
-# create a persistent volume for postgres data
-VOLUME /var/lib/postgresql/data
-
-# create a persistent volume for razor data
-VOLUME /var/lib/razor/repo-store
 
 USER root
 COPY bin ./bin
