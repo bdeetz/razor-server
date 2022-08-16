@@ -24,7 +24,7 @@ Requires=docker.service
 
 [Service]
 Restart=always
-ExecStart=/usr/bin/docker run --rm -u root --privileged --network host --name puppet-razor puppet-razor:latest
+ExecStart=/usr/bin/docker run -u root --privileged --network host --name puppet-razor puppet-razor:latest
 ExecStop=/usr/bin/docker stop puppet-razor
 TimeoutStopSec=120
 
