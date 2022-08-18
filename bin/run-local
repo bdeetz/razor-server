@@ -351,7 +351,7 @@ if ! _is_sourced; then
         # A script for running the Razor server, i.e. as a development environment.
         # This will: download the microkernel, migrate the database, deploy
         # the app to torquebox, install the razor-client, then start torquebox.
-        if [[ ${SKIP_RAZOR_INIT} -eq 1 ]]
+        if [[ ${SKIP_RAZOR_INIT} -ne 1 ]]
         then
             createuser razor
             psql -c "CREATE DATABASE razor"
