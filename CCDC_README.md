@@ -35,11 +35,17 @@ TimeoutStopSec=120
 WantedBy=default.target
 EOF
 
-# only necessary on the first container start
-# this is not necessary after rebuilds
+# NOTE: Only necessary if you're on the virtual appliance
+systemctl stop puppet-razor.service
 
-docker stop puppet-razor
-docker start puppet-razor
+# NOTE: You can skip this if you are working from the CCDC virtual appliance
+systemctl daemon-reload
+
+# NOTE: You can skip this if you are working from the CCDC virtual appliance
+systemctl enable puppet-razor.service
+
+# this will start the container
+systemctl start puppet-razor.service
 ```
 
 ## Installation from a container repository
