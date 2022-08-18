@@ -335,7 +335,9 @@ _main() {
 		echo
 	else
 		echo
-		echo 'PostgreSQL Database directory appears to contain a database; Skipping initialization'
+		echo 'PostgreSQL Database directory appears to contain a database; Skipping initialization; Starting postgresql'
+		export PGPASSWORD="${PGPASSWORD:-$POSTGRES_PASSWORD}"
+		docker_temp_server_start "$@"
 		echo
 	fi
 }
