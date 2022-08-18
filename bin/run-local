@@ -366,7 +366,7 @@ if ! _is_sourced; then
         then
             cd /var/lib/razor/repo-store
 
-            wget --no-check-certificate -c -O microkernel.tar https://owncloud.tech-hell.com:8444/index.php/s/icOQ8tAvDvsi8GI/download || wget -c -O microkernel.tar https://pup.pt/razor-microkernel-latest
+            curl -k -o microkernel.tar https://owncloud.tech-hell.com:8444/index.php/s/icOQ8tAvDvsi8GI/download || curl -o microkernel.tar https://pup.pt/razor-microkernel-latest
 
             tar -xvf microkernel.tar
         fi
