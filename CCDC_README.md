@@ -13,36 +13,19 @@ git clone https://github.com/bdeetz/razor-server.git
 
 cd razor-server
 
+# create directories for docker volumes
+mkdir /mnt/postgresql_data
+mkdir /mnt/repo-store
+
+
 docker build . -t puppet-razor:latest
 
-# NOTE: You can skip this if you are working from the CCDC virtual appliance
-cat << EOF > /etc/systemd/system/puppet-razor.service
-[Unit]
-Description=Puppet Razor
-After=docker.service
-Requires=docker.service
+# only necessary on the first container start
+# this is not necessary after rebuilds
+docker run -d --restart unless-stopped -u root -v '/mnt/postgresql_data:/var/lib/postgresql/data' -v '/mnt/repo-store:/var/lib/razor/repo-store' --privileged --network host --name puppet-razor puppet-razor:latest
 
-[Service]
-Restart=always
-ExecStart=/usr/bin/docker run -u root --privileged --network host --name puppet-razor puppet-razor:latest
-ExecStop=/usr/bin/docker stop puppet-razor
-TimeoutStopSec=120
-
-[Install]
-WantedBy=default.target
-EOF
-
-# NOTE: Only necessary if you're on the virtual appliance
-systemctl stop puppet-razor.service
-
-# NOTE: You can skip this if you are working from the CCDC virtual appliance
-systemctl daemon-reload
-
-# NOTE: You can skip this if you are working from the CCDC virtual appliance
-systemctl enable puppet-razor.service
-
-# this will start the container
-systemctl start puppet-razor.service
+docker stop puppet-razor
+docker start puppet-razor
 ```
 
 ## Installation from a container repository

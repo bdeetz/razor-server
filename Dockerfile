@@ -20,22 +20,22 @@ COPY Gemfile Gemfile.lock ./
 RUN gem install bundler -v 1.17.3
 RUN bundle install
 
-#COPY app.rb .
-#COPY config.ru .
-#COPY shiro.ini .
-#COPY torquebox.rb .
-#COPY Rakefile .
-#COPY brokers ./brokers
-#COPY db ./db
-#COPY hooks ./hooks
-## this seems to be needed
-#COPY jars ./jars
-#COPY lib ./lib
-#COPY locales ./locales
-#COPY spec ./spec
-#COPY tasks ./tasks
+COPY app.rb .
+COPY config.ru .
+COPY shiro.ini .
+COPY torquebox.rb .
+COPY Rakefile .
+COPY brokers ./brokers
+COPY db ./db
+COPY hooks ./hooks
+# this seems to be needed
+COPY jars ./jars
+COPY lib ./lib
+COPY locales ./locales
+COPY spec ./spec
+COPY tasks ./tasks
 
-COPY . .
+#COPY . .
 
 USER root
 
