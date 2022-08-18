@@ -361,6 +361,16 @@ if ! _is_sourced; then
             /usr/src/app/bin/razor-admin migrate-database
         fi
 
+        printf "ensuring microkernel is in place"
+        if [ ! -e /var/lib/razor/repo-store/microkernel ]
+        then
+            cd /var/lib/razor/repo-store
+
+            wget --no-check-certificate -c -O microkernel.tar https://owncloud.tech-hell.com:8444/index.php/s/icOQ8tAvDvsi8GI/download || wget -c -O microkernel.tar https://pup.pt/razor-microkernel-latest
+
+            tar -xvf microkernel.tar
+        fi
+
         # Deploy and start torquebox
         cd /usr/src/app/
         torquebox deploy

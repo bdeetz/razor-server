@@ -16,6 +16,7 @@ cd razor-server
 # create directories for docker volumes
 mkdir /mnt/postgresql_data
 mkdir /mnt/repo-store
+chown -R 70 /mnt/repo-store
 
 
 docker build . -t puppet-razor:latest
