@@ -28,7 +28,7 @@ After=docker.service
 Requires=docker.service
 [Service]
 Restart=always
-ExecStart=/usr/bin/docker run -rm -u root -v '/mnt/postgresql_data:/var/lib/postgresql/data' -v '/mnt/repo-store:/var/lib/razor/repo-store' --privileged --network host --name puppet-razor puppet-razor:latest
+ExecStart=/usr/bin/docker run --rm -u root -v '/mnt/postgresql_data:/var/lib/postgresql/data' -v '/mnt/repo-store:/var/lib/razor/repo-store' --privileged --network host --name puppet-razor puppet-razor:latest
 ExecStop=/usr/bin/docker stop puppet-razor
 TimeoutStopSec=120
 [Install]
