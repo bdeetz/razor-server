@@ -18,12 +18,25 @@ mkdir /mnt/postgresql_data
 mkdir /mnt/repo-store
 chown -R 70 /mnt/repo-store
 
-
 docker build . -t puppet-razor:latest
+
+# NOTE: You can skip this if you are working from the CCDC virtual appliance
+cat << EOF > /etc/systemd/system/puppet-razor.service
+[Unit]
+Description=Puppet Razor
+After=docker.service
+Requires=docker.service
+[Service]
+Restart=always
+ExecStart=/usr/bin/docker run -rm -u root -v '/mnt/postgresql_data:/var/lib/postgresql/data' -v '/mnt/repo-store:/var/lib/razor/repo-store' --privileged --network host --name puppet-razor puppet-razor:latest
+ExecStop=/usr/bin/docker stop puppet-razor
+TimeoutStopSec=120
+[Install]
+WantedBy=default.target
+EOF
 
 # only necessary on the first container start
 # this is not necessary after rebuilds
-docker run -d --restart unless-stopped -u root -v '/mnt/postgresql_data:/var/lib/postgresql/data' -v '/mnt/repo-store:/var/lib/razor/repo-store' --privileged --network host --name puppet-razor puppet-razor:latest
 
 docker stop puppet-razor
 docker start puppet-razor
