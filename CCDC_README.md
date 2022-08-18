@@ -13,6 +13,11 @@ git clone https://github.com/bdeetz/razor-server.git
 
 cd razor-server
 
+# create directories for docker volumes
+mkdir /mnt/postgresql_data
+mkdir /mnt/repo-store
+chown -R 70 /mnt/repo-store
+
 docker build . -t puppet-razor:latest
 
 # NOTE: You can skip this if you are working from the CCDC virtual appliance
@@ -21,13 +26,11 @@ cat << EOF > /etc/systemd/system/puppet-razor.service
 Description=Puppet Razor
 After=docker.service
 Requires=docker.service
-
 [Service]
 Restart=always
-ExecStart=/usr/bin/docker run --rm -u root --privileged --network host --name puppet-razor puppet-razor:latest
+ExecStart=/usr/bin/docker run --rm -u root -v '/mnt/postgresql_data:/var/lib/postgresql/data' -v '/mnt/repo-store:/var/lib/razor/repo-store' --privileged --network host --name puppet-razor puppet-razor:latest
 ExecStop=/usr/bin/docker stop puppet-razor
 TimeoutStopSec=120
-
 [Install]
 WantedBy=default.target
 EOF

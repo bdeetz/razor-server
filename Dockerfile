@@ -20,22 +20,22 @@ COPY Gemfile Gemfile.lock ./
 RUN gem install bundler -v 1.17.3
 RUN bundle install
 
-#COPY app.rb .
-#COPY config.ru .
-#COPY shiro.ini .
-#COPY torquebox.rb .
-#COPY Rakefile .
-#COPY brokers ./brokers
-#COPY db ./db
-#COPY hooks ./hooks
-## this seems to be needed
-#COPY jars ./jars
-#COPY lib ./lib
-#COPY locales ./locales
-#COPY spec ./spec
-#COPY tasks ./tasks
+COPY app.rb .
+COPY config.ru .
+COPY shiro.ini .
+COPY torquebox.rb .
+COPY Rakefile .
+COPY brokers ./brokers
+COPY db ./db
+COPY hooks ./hooks
+# this seems to be needed
+COPY jars ./jars
+COPY lib ./lib
+COPY locales ./locales
+COPY spec ./spec
+COPY tasks ./tasks
 
-COPY . .
+#COPY . .
 
 USER root
 
@@ -111,6 +111,7 @@ RUN mv in.tftpd.docker /etc/conf.d/in.tftpd
 
 COPY undionly.kpxe .
 COPY bootstrap.ipxe .
+RUN mv undionly.kpxe /var/lib/razor/repo-store/undionly.kpxe
 RUN mv bootstrap.ipxe /var/lib/razor/repo-store/bootstrap.ipxe
 
 RUN rm -rf /var/tftpboot && ln -s /var/lib/razor/repo-store /var/tftpboot && chown -R postgres:postgres /var/tftpboot && chown -R postgres:postgres /var/lib/razor/repo-store
@@ -120,9 +121,6 @@ USER postgres
 # install razor client
 RUN gem install faraday -v 0.17.4
 RUN gem install razor-client
-
-# create a persistent volume for postgres data
-VOLUME /var/lib/postgresql/data
 
 USER root
 COPY bin ./bin
@@ -134,5 +132,11 @@ RUN adduser -G razor -D razor
 RUN echo "razor:razor" | chpasswd
 
 USER postgres
+
+# create a persistent volume for postgres data
+VOLUME /var/lib/postgresql/data
+
+# create a persistent volume for razor data
+VOLUME /var/lib/razor/repo-store
 
 ENTRYPOINT ["/usr/src/app/bin/run-local"]

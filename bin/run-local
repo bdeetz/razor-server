@@ -5,6 +5,7 @@ set -x
 export PGDATA="/var/lib/postgresql/data"
 export POSTGRES_USER="postgres"
 export POSTGRES_PASSWORD="razor"
+export SKIP_RAZOR_INIT=0
 
 # TODO swap to -Eeuo pipefail above (after handling all potentially-unset variables)
 
@@ -302,7 +303,7 @@ _main() {
 	# setup data directories and permissions (when run as root)
 	docker_create_db_directories
 
-        strace /usr/sbin/in.tftpd -L -u postgres -s /var/tftpboot --verbosity 4&
+        strace /usr/sbin/in.tftpd -L -u postgres -s /var/tftpboot --verbosity 4 > /dev/null 2>&1 &
 
 	if [ "$(id -u)" = '0' ]; then
 		# then restart script as postgres user
@@ -335,7 +336,11 @@ _main() {
 		echo
 	else
 		echo
-		echo 'PostgreSQL Database directory appears to contain a database; Skipping initialization'
+		echo 'PostgreSQL Database directory appears to contain a database; Skipping initialization; Starting postgresql'
+		export PGPASSWORD="${PGPASSWORD:-$POSTGRES_PASSWORD}"
+		docker_temp_server_start "$@"
+
+                export SKIP_RAZOR_INIT=1
 		echo
 	fi
 }
@@ -346,31 +351,47 @@ if ! _is_sourced; then
         # A script for running the Razor server, i.e. as a development environment.
         # This will: download the microkernel, migrate the database, deploy
         # the app to torquebox, install the razor-client, then start torquebox.
-        createuser razor
-        psql -c "CREATE DATABASE razor"
-        #psql -c "CREATE USER razor WITH ENCRYPTED PASSWORD 'razor'; GRANT ALL PRIVILEGES ON DATABASE razor TO razor;"
-        psql -c "GRANT ALL PRIVILEGES ON DATABASE razor TO razor;"
-        #psql -c "CREATE USER razor WITH ENCRYPTED PASSWORD 'razor'"
+        if [[ ${SKIP_RAZOR_INIT} -ne 1 ]]
+        then
+            createuser razor
+            psql -c "CREATE DATABASE razor"
+            psql -c "GRANT ALL PRIVILEGES ON DATABASE razor TO razor;"
 
-        cp undionly.kpxe /var/lib/razor/repo-store/
+            # Migrate the database.
+            /usr/src/app/bin/razor-admin migrate-database
+        fi
 
         printf "ensuring microkernel is in place"
         if [ ! -e /var/lib/razor/repo-store/microkernel ]
         then
             cd /var/lib/razor/repo-store
-            wget -c -O microkernel.tar https://pup.pt/razor-microkernel-latest
+
+            curl -k -o microkernel.tar https://owncloud.tech-hell.com:8444/index.php/s/icOQ8tAvDvsi8GI/download || curl -o microkernel.tar https://pup.pt/razor-microkernel-latest
+
             tar -xvf microkernel.tar
         fi
-
-        #/usr/sbin/in.tftpd -l -s /var/lib/razor/repo-store/ -u postgres -p
-
-        # Migrate the database.
-        /usr/src/app/bin/razor-admin migrate-database
 
         # Deploy and start torquebox
         cd /usr/src/app/
         torquebox deploy
         torquebox run -b 0.0.0.0 --port 8150
+        razor_pid=$$
+
+        # wait for the service to become available
+        # wait up to 120 seconds
+        #retry_count=0
+        #json_parsed=0
+        #while [[ ${json_parsed} -eq 0 ]]
+        #do
+        #  curl http://localhost:8150/api 
+        #  retry_count=$((${retry_count}+1))
+        #  sleep 1
+        #done
+
+        #while kill -0 ${razor_pid} 2> /dev/null
+        #do
+        #  sleep 1
+        #done
 
         # catch all for exec'd commands
         #exec "$@"
