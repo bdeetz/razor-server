@@ -5,6 +5,7 @@ set -x
 export PGDATA="/var/lib/postgresql/data"
 export POSTGRES_USER="postgres"
 export POSTGRES_PASSWORD="razor"
+export SKIP_RAZOR_INIT=0
 
 # TODO swap to -Eeuo pipefail above (after handling all potentially-unset variables)
 
@@ -338,6 +339,8 @@ _main() {
 		echo 'PostgreSQL Database directory appears to contain a database; Skipping initialization; Starting postgresql'
 		export PGPASSWORD="${PGPASSWORD:-$POSTGRES_PASSWORD}"
 		docker_temp_server_start "$@"
+
+                export SKIP_RAZOR_INIT=1
 		echo
 	fi
 }
@@ -348,12 +351,15 @@ if ! _is_sourced; then
         # A script for running the Razor server, i.e. as a development environment.
         # This will: download the microkernel, migrate the database, deploy
         # the app to torquebox, install the razor-client, then start torquebox.
-        createuser razor
-        psql -c "CREATE DATABASE razor"
-        psql -c "GRANT ALL PRIVILEGES ON DATABASE razor TO razor;"
+        if [[ ${SKIP_RAZOR_INIT} -eq 1 ]]
+        then
+            createuser razor
+            psql -c "CREATE DATABASE razor"
+            psql -c "GRANT ALL PRIVILEGES ON DATABASE razor TO razor;"
 
-        # Migrate the database.
-        /usr/src/app/bin/razor-admin migrate-database
+            # Migrate the database.
+            /usr/src/app/bin/razor-admin migrate-database
+        fi
 
         # Deploy and start torquebox
         cd /usr/src/app/
