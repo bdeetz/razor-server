@@ -76,4 +76,6 @@ done
 if [[ ${noop_found} -eq 0 ]]
 then
     razor create-broker --name=noop --broker-type=noop
+else
+    echo "noop broker already exists... skipping"
 fi
