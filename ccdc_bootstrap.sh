@@ -1,5 +1,42 @@
 #!/usr/bin/env bash
 
+function print_help() {
+    printf "options:\n"
+    printf "    --cleanup -- deletes all isos, tasks, repos, and policies this script creates\n"
+    printf "    -h -- print help\n\n"
+
+    printf "examples:\n"
+    printf "# deletes all isos, tasks, repos, and policies this script creates\n"
+    printf "$0 --cleanup\n\n"
+    printf "# creates all isos, tasks, repos, and policies\n"
+    printf "$0\n\n"
+
+    exit 1
+}
+
+
+########################################
+# handle command line arguments
+########################################
+
+CLEANUP=0
+
+while [[ $# -gt 0 ]]
+do
+  key="$1"
+
+  case $key in
+      --cleanup)
+      CLEANUP=1
+      shift # past value
+      ;;
+      -h|--help)
+          print_help
+      ;;
+  esac
+done
+
+
 set -Eeo pipefail
 set -x
 
