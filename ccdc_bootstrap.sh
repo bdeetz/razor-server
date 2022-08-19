@@ -138,5 +138,5 @@ done
 if [[ ${test_hosts_policy_found} -eq 0 ]]
 then
     echo "test-hosts policy does not exist... creating"
-    razor create-policy --name "test-hosts" --repo "ubuntu-16.04.1-server-amd64.iso" --task "ubuntu" --broker "noop" --enabled --max-count=100 --tag "test-hosts" --hostname 'host${id}'
+    razor create-policy --name "test-hosts" --repo "ubuntu-16.04.1-server-amd64.iso" --task "ubuntu" --broker "noop" --enabled --max-count=100 --tag "test-hosts" --hostname 'host${id}' --root-password '&QP-t]5$xrTkdiyx'
 fi
