@@ -54,4 +54,4 @@ TODO
 ## Configuring the bootstrap
 Bootstrap of the CCDC provisioning configuration is defined in `ccdc_bootstrap.sh`. When the container starts for the first time, it will copy the bootstrap script to your container's `repo-store` volume mount point on the container host. That path is defined as `/mnt/repo-store/` in this document.
 
-This script is executed after the razor service is fully up.
+The `ccdc_bootstrap.sh` script is executed after the razor service is fully up every time the container is restarted. As a result, updating `/mnt/repo-store/ccdc_bootstrap.sh` then executing `systemctl restart puppet-razor` on the container host will result in newly defined configuration objects being created.
