@@ -1,4 +1,18 @@
 # SWCCDC Puppet Razor Deployment and Development
+## How does razor work?
+Razor is a baremetal provisioning system that allows you to provision hosts based on defined policies. There are 4 primary components of razor you will likely need to worry about within the context of a CCDC game.
+
+components:
+* repos
+  * This is the install media you're booting to
+* tags
+  * metadata driven tags assigned to nodes
+  * there can be more than 1 tag associated with a node
+  * logic for a tag could be based on number of cores, serial number, mac addresses, amount of ram, etc.
+* policies
+  * policies tie everything together
+  * a policy will say something like "install ubuntu using this repo when the following tags are assigned to the node"
+
 ## BUILDING AND STARTING
 NOTE: This service expects the razor server to be at 192.168.94.3.
       If the ip address of the razor server needs to be different, update bootstrap.ipxe,
