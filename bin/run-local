@@ -385,7 +385,7 @@ if ! _is_sourced; then
         do
           set +e
           set +o pipefail
-          curl http://localhost:8150/api | jq
+          curl http://localhost:8150/api | jq -c -M
           ret=$?
           set -e
           set -o pipefail
