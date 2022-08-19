@@ -383,16 +383,10 @@ if ! _is_sourced; then
         json_parsed=0
         while [[ ${json_parsed} -eq 0 ]]
         do
-          set +E
-          set +e
-          set +o pipefail
-          jq -c -M < <(curl -s http://localhost:8150/api)
-          ret=$?
-          set -E
-          set -e
-          set -o pipefail
+          http_code=$(curl -I -s http://localhost:8150/api | head -n 1 | cut -d ' ' -f 2)
+          echo "http return code is ${http_code}"
 
-          if [[ ${ret} -eq 0 ]]
+          if [[ ${http_code} -eq 200 ]]
           then
               echo "razor server has started!"
               break
