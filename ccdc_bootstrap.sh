@@ -141,5 +141,5 @@ then
 
     # note that this contains a password in a public repo. As a result
     # be sure your configuration code changes this secret
-    razor create-policy --name "test-hosts" --repo "ubuntu-16.04.1-server-amd64.iso" --task "ubuntu" --broker "noop" --enabled --max-count=100 --tag "test-hosts" --hostname 'host${id}' --root-password '&QP-t]5$xrTkdiyx'
+    razor create-policy --name "test-hosts" --repo "ubuntu-16.04.1-server-amd64.iso" --task "ubuntu/xenial" --broker "noop" --enabled --max-count=100 --tag "test-hosts" --hostname 'host${id}' --root-password '&QP-t]5$xrTkdiyx'
 fi
