@@ -404,7 +404,17 @@ if ! _is_sourced; then
         done
 
         echo "bootstrapping CCDC razor server"
-        /usr/src/app/bin/ccdc_bootstrap.sh
+
+        # check if the bootstrap file doesn't exist in the repo-store directory
+        if [[ ! -f /var/lib/razor/repo-store/ccdc_bootstrap.sh ]]
+        then
+            # copy the bootstrap script since it doesn't exist
+            cp /usr/src/app/bin/ccdc_bootstrap.sh /var/lib/razor/repo-store/ccdc_bootstrap.sh
+        fi
+
+        # run the bootstrap script from the repo-store directory
+        # this allows us to modify the file without re-building the container
+        /var/lib/razor/repo-store/ccdc_bootstrap.sh
 
         while kill -0 ${razor_pid} 2> /dev/null
         do

@@ -15,6 +15,9 @@ cd /var/lib/razor/repo-store
 
 echo "Bootstrapping isos"
 
+###########################################
+# Download ISOs
+###########################################
 # for each k/v pair
 for filename in "${!iso_urls[@]}"
 do
@@ -26,6 +29,9 @@ do
     fi
 done
 
+############################################
+# register isos with razor as repos
+############################################
 # get a list of all repos now in razor
 repos=$(curl -s http://localhost:8150/api/collections/repos | jq -r '.items[].name')
 
@@ -50,3 +56,24 @@ do
         razor create-repo --name=${filename} --iso-url file:///var/lib/razor/repo-store/${filename} --task ${iso_tasks[${filename}]}
     fi
 done
+
+#################################################
+# register noop broker
+#################################################
+brokers=$(curl -s http://localhost:8150/api/collections/brokers | jq -r '.items[].name')
+
+noop_found=0
+
+for broker in ${brokers[@]}
+do
+    if [[ "${broker}" == "noop" ]]
+    then
+        noop_found=1
+        break
+    fi
+done
+
+if [[ ${noop_found} -eq 0 ]]
+then
+    razor create-broker --name=noop --broker-type=noop
+fi
