@@ -17,10 +17,10 @@ iso_urls=(
 )
 
 iso_tasks=(
-["ubuntu-16.04.1-desktop-amd64.iso"]="ubuntu"
-["ubuntu-16.04.1-server-amd64.iso"]="ubuntu"
-["ubuntu-18.04-desktop-amd64.iso"]="ubuntu"
-["ubuntu-18.04-live-server-amd64.iso"]="ubuntu"
+["ubuntu-16.04.1-desktop-amd64.iso"]="ubuntu/xenial"
+["ubuntu-16.04.1-server-amd64.iso"]="ubuntu/xenial"
+["ubuntu-18.04-desktop-amd64.iso"]="ubuntu/bionic"
+["ubuntu-18.04-live-server-amd64.iso"]="ubuntu/bionic"
 )
 
 cd /var/lib/razor/repo-store
