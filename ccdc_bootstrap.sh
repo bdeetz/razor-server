@@ -117,3 +117,26 @@ else
     echo "test-hosts tag already exists... updating"
     razor update-tag-rule --name test-hosts --rule "${test_hosts_filter}" --force
 fi
+
+#######################################################
+# create policies
+#######################################################
+
+policies=$(curl -s http://localhost:8150/api/collections/policies | jq -r '.items[].name')
+
+test_hosts_policy_found=0
+
+for policy in ${policies[@]}
+do
+    if [[ "${policy}" == "test-hosts" ]]
+    then
+        test_hosts_policy_found=1
+        break
+    fi
+done
+
+if [[ ${test_hosts_policy_found} -eq 0 ]]
+then
+    echo "test-hosts policy does not exist... creating"
+    razor create-policy --name "test-hosts" --repo "ubuntu-16.04.1-server-amd64.iso" --task "ubuntu" --broker "noop" --enabled --max-count=100 --tag "test-hosts"
+fi
