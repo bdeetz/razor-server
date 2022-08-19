@@ -3,6 +3,8 @@
 set -Eeo pipefail
 set -x
 
+test_hosts_filter='["in", ["fact", "macaddress"], "00:0c:29:f8:23:bf", "00:0c:29:f8:23:c0"]'
+
 declare -A iso_urls
 declare -A iso_tasks
 
@@ -88,4 +90,30 @@ then
     razor create-broker --name=noop --broker-type=noop
 else
     echo "noop broker already exists... skipping"
+fi
+
+#####################################################
+# register host tags
+#####################################################
+
+tags=$(curl -s http://localhost:8150/api/collections/tags | jq -r '.items[].name')
+
+test_hosts_tag_found=0
+
+for tag in ${tags[@]}
+do
+    if [[ "${tag}" == "test-hosts" ]]
+    then
+        test_hosts_tag_found=1
+        break
+    fi
+done
+
+if [[ ${test_hosts_tag_found} -eq 0 ]]
+then
+    echo "test-hosts tag does not exist... creating"
+    razor create-tag --name test-hosts --rule "${test_hosts_filter}"
+else
+    echo "test-hosts tag already exists... updating"
+    razor update-tag-rule --name test-hosts --rule "${test_hosts_filter}" --force
 fi
