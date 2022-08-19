@@ -1,7 +1,16 @@
 #!/usr/bin/env bash
+###########################################
+# This script is for bootstrapping the
+# configuration of the razor server.
+# Most aspects can be controlled by
+# modifying the parameters set in the
+# CONFIGURATION section at the top of this
+# script.
+###########################################
 
-CLEANUP=0
-
+###########################################
+# CONFIGURATION
+###########################################
 test_hosts_filter='["in", ["fact", "macaddress"], "00:0c:29:f8:23:bf", "00:0c:29:f8:23:c0"]'
 
 declare -A iso_urls
@@ -21,6 +30,12 @@ iso_tasks=(
 ["ubuntu-18.04-desktop-amd64.iso"]="ubuntu/bionic"
 ["ubuntu-18.04-live-server-amd64.iso"]="ubuntu/bionic"
 )
+
+###########################################
+# CLI ARGUMENT FLAGS - DO NOT MODIFY!!!!
+###########################################
+CLEANUP=0
+
 
 function print_help() {
     printf "options:\n"
