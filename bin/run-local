@@ -399,7 +399,7 @@ if ! _is_sourced; then
               echo "razor server did not start within ${max_retries} seconds. exiting"
               exit 1
           else
-              "razor server not started yet. retrying"
+              echo "razor server not started yet. retrying"
               retry_count=$((${retry_count}+1))
               sleep 1
           fi
