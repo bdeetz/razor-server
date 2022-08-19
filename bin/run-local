@@ -383,10 +383,12 @@ if ! _is_sourced; then
         json_parsed=0
         while [[ ${json_parsed} -eq 0 ]]
         do
+          set +E
           set +e
           set +o pipefail
           curl http://localhost:8150/api | jq -c -M
           ret=$?
+          set -E
           set -e
           set -o pipefail
 
