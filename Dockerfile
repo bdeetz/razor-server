@@ -111,8 +111,6 @@ RUN mv in.tftpd.docker /etc/conf.d/in.tftpd
 
 COPY undionly.kpxe .
 COPY bootstrap.ipxe .
-RUN mv undionly.kpxe /var/lib/razor/repo-store/undionly.kpxe
-RUN mv bootstrap.ipxe /var/lib/razor/repo-store/bootstrap.ipxe
 
 RUN rm -rf /var/tftpboot && ln -s /var/lib/razor/repo-store /var/tftpboot && chown -R postgres:postgres /var/tftpboot && chown -R postgres:postgres /var/lib/razor/repo-store
 

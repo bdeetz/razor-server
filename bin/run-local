@@ -369,6 +369,17 @@ if ! _is_sourced; then
             curl -k -o microkernel.tar https://owncloud.tech-hell.com:8444/index.php/s/icOQ8tAvDvsi8GI/download || curl -o microkernel.tar https://pup.pt/razor-microkernel-latest
 
             tar -xvf microkernel.tar
+
+        fi
+
+        if [ ! -e /var/lib/razor/repo-store/undionly.kpxe ]
+        then
+            cp /usr/src/app/undionly.kpxe /var/lib/razor/repo-store/undionly.kpxe
+        fi
+
+        if [ ! -e /var/lib/razor/repo-store/bootstrap.ipxe ]
+        then
+            cp /usr/src/app/bootstrap.ipxe /var/lib/razor/repo-store/bootstrap.ipxe
         fi
 
         # Deploy and start torquebox
