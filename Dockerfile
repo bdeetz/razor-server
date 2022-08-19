@@ -127,9 +127,13 @@ COPY bin ./bin
 COPY config.yaml.docker .
 RUN mv config.yaml.docker config.yaml
 RUN chmod +x bin/*
+COPY ccdc_bootstrap.sh .
+RUN mv ccdc_bootstrap.sh /usr/src/app/bin/ccdc_bootstrap.sh
+
 RUN addgroup -S razor
 RUN adduser -G razor -D razor
 RUN echo "razor:razor" | chpasswd
+RUN apk add jq
 
 USER postgres
 
