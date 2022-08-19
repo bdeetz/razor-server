@@ -65,7 +65,9 @@ do
     then
         echo "repo already exists... skipping"
     else
-        razor create-repo --name=${filename} --iso-url file:///var/lib/razor/repo-store/${filename} --task ${iso_tasks[${filename}]}
+        task_name=$(echo "${filename}" | cut -d '.' -f 1)
+
+        razor create-repo --name=${task_name} --iso-url file:///var/lib/razor/repo-store/${filename} --task ${iso_tasks[${filename}]}
     fi
 done
 
@@ -141,5 +143,5 @@ then
 
     # note that this contains a password in a public repo. As a result
     # be sure your configuration code changes this secret
-    razor create-policy --name "test-hosts" --repo "ubuntu-16.04.1-server-amd64.iso" --task "ubuntu/xenial" --broker "noop" --enabled --max-count=100 --tag "test-hosts" --hostname 'host${id}' --root-password '&QP-t]5$xrTkdiyx'
+    razor create-policy --name "test-hosts" --repo "ubuntu-16.04.1-server-amd64" --task "ubuntu/xenial" --broker "noop" --enabled --max-count=100 --tag "test-hosts" --hostname 'host${id}' --root-password '&QP-t]5$xrTkdiyx'
 fi
