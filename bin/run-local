@@ -391,6 +391,7 @@ if ! _is_sourced; then
               echo "razor server has started!"
               break
           elif [[ ${retry_count} -eq ${max_retries} ]]
+          then
               echo "razor server did not start within ${max_retries} seconds. exiting"
               exit 1
           else
