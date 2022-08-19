@@ -82,7 +82,7 @@ function create_repos() {
     # for each k/v pair
     for filename in "${!iso_urls[@]}"
     do
-        modified_repo_name=$(echo "${filename}" | cut -d '.' -f 1)
+        modified_repo_name=$(echo "${filename}" | sed -e 's/\.iso//g')
 
         # determine if the razor repo has already been created
         repo_found=0
@@ -112,7 +112,7 @@ function destroy_repos() {
     # for each k/v pair
     for filename in "${!iso_urls[@]}"
     do
-        modified_repo_name=$(echo "${filename}" | cut -d '.' -f 1)
+        modified_repo_name=$(echo "${filename}" | sed -e 's/\.iso//g')
 
         # determine if the razor repo has already been created
         repo_found=0
