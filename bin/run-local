@@ -374,24 +374,39 @@ if ! _is_sourced; then
         # Deploy and start torquebox
         cd /usr/src/app/
         torquebox deploy
-        torquebox run -b 0.0.0.0 --port 8150
+        torquebox run -b 0.0.0.0 --port 8150&
         razor_pid=$$
 
         # wait for the service to become available
-        # wait up to 120 seconds
-        #retry_count=0
-        #json_parsed=0
-        #while [[ ${json_parsed} -eq 0 ]]
-        #do
-        #  curl http://localhost:8150/api 
-        #  retry_count=$((${retry_count}+1))
-        #  sleep 1
-        #done
+        max_retries=300
+        retry_count=0
+        json_parsed=0
+        while [[ ${json_parsed} -eq 0 ]]
+        do
+          curl http://localhost:8150/api | jq
+          ret=$?
 
-        #while kill -0 ${razor_pid} 2> /dev/null
-        #do
-        #  sleep 1
-        #done
+          if [[ ${ret} -eq 0 ]]
+          then
+              echo "razor server has started!"
+              break
+          elif [[ ${retry_count} -eq ${max_retries} ]]
+              echo "razor server did not start within ${max_retries} seconds. exiting"
+              exit 1
+          else
+              "razor server not started yet. retrying"
+              retry_count=$((${retry_count}+1))
+              sleep 1
+          fi
+        done
+
+        echo "bootstrapping CCDC razor server"
+        /usr/src/app/bin/ccdc_bootstrap.sh
+
+        while kill -0 ${razor_pid} 2> /dev/null
+        do
+          sleep 1
+        done
 
         # catch all for exec'd commands
         #exec "$@"
