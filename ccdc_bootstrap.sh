@@ -7,9 +7,19 @@ declare -A iso_urls
 declare -A iso_tasks
 
 # k/v of filenames and download urls for isos
-iso_urls=(["ubuntu-16.04.1-server-amd64.iso"]="https://owncloud.tech-hell.com:8444/index.php/s/NdvfibI06WdvTbi/download" )
+iso_urls=(
+["ubuntu-16.04.1-desktop-amd64.iso"]="https://owncloud.tech-hell.com:8444/index.php/s/q35kklGQHh8UnuX/download"
+["ubuntu-16.04.1-server-amd64.iso"]="https://owncloud.tech-hell.com:8444/index.php/s/NdvfibI06WdvTbi/download"
+["ubuntu-18.04-desktop-amd64.iso"]="https://owncloud.tech-hell.com:8444/index.php/s/FYhSU6icibEEFr2/download"
+["ubuntu-18.04-live-server-amd64.iso"]="https://owncloud.tech-hell.com:8444/index.php/s/5OehYpFeJ1xMl32/download"
+)
 
-iso_tasks=(["ubuntu-16.04.1-server-amd64.iso"]="ubuntu")
+iso_tasks=(
+["ubuntu-16.04.1-desktop-amd64.iso"]="ubuntu"
+["ubuntu-16.04.1-server-amd64.iso"]="ubuntu"
+["ubuntu-18.04-desktop-amd64.iso"]="ubuntu"
+["ubuntu-18.04-live-server-amd64.iso"]="ubuntu"
+)
 
 cd /var/lib/razor/repo-store
 
