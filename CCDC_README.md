@@ -61,8 +61,8 @@ systemctl enable puppet-razor.service
 # this will start the container
 systemctl start puppet-razor.service
 
+# redirects the razor cli command from the container host into the container
 echo 'alias razor="docker exec -it -u postgres puppet-razor razor $@"' >> ~/.profile
-
 source ~/.profile
 ```
 
