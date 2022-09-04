@@ -303,6 +303,7 @@ _main() {
 	# setup data directories and permissions (when run as root)
 	docker_create_db_directories
 
+        # TODO: figure out why we have to run with strace to not have issues
         strace /usr/sbin/in.tftpd -L -u postgres -s /var/tftpboot --verbosity 4 > /dev/null 2>&1 &
 
 	if [ "$(id -u)" = '0' ]; then
