@@ -94,3 +94,26 @@ TODO
 Bootstrap of the CCDC provisioning configuration is defined in `ccdc_bootstrap.sh`. When the container starts for the first time, it will copy the bootstrap script to your container's `repo-store` volume mount point on the container host. That path is defined as `/mnt/repo-store/` in this document.
 
 The `ccdc_bootstrap.sh` script is executed after the razor service is fully up every time the container is restarted. As a result, updating `/mnt/repo-store/ccdc_bootstrap.sh` then executing `systemctl restart puppet-razor` on the container host will result in newly defined configuration objects being created.
+
+## DHCP SERVER CONFIGURATION
+### isc-dhcp-server
+```
+default-lease-time 600;
+max-lease-time 7200;
+ddns-update-style none;
+authoritative;
+
+subnet 192.168.94.0 netmask 255.255.255.0 {
+  range 192.168.94.100 192.168.94.200;
+  option subnet-mask 255.255.255.0;
+
+  option domain-name-servers 192.168.1.1;
+
+  if exists user-class and option user-class = "iPXE" {
+    filename "bootstrap.ipxe";
+  } else {
+    filename "undionly.kpxe";
+  }
+  next-server 192.168.94.3;
+}
+```
