@@ -41,6 +41,8 @@ sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plu
 # END DOCKER INSTALL (Ubuntu 20.04)
 ################################################
 
+sudo -s
+
 # NOTE: You can skip this if you are working from the CCDC virtual appliance
 git clone https://github.com/bdeetz/razor-server.git
 
