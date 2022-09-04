@@ -9,9 +9,23 @@
 ###########################################
 
 ###########################################
+######### adding a new iso ################
+# update iso_urls map
+# update iso_tasks map
+###########################################
+
+######## updating host targeting ##########
+# update tags map
+###########################################
+###########################################
+
+
+###########################################
 # CONFIGURATION
 ###########################################
-test_hosts_filter='["in", ["fact", "macaddress"], "00:0c:29:f8:23:bf", "00:0c:29:f8:23:c0"]'
+tags=(
+["test-hosts"]='["in", ["fact", "macaddress"], "00:0c:29:f8:23:bf", "00:0c:29:f8:23:c0"]'
+)
 
 declare -A iso_urls
 declare -A iso_tasks
@@ -22,6 +36,7 @@ iso_urls=(
 ["ubuntu-16.04.1-server-amd64.iso"]="https://owncloud.tech-hell.com:8444/index.php/s/NdvfibI06WdvTbi/download"
 ["ubuntu-18.04-desktop-amd64.iso"]="https://owncloud.tech-hell.com:8444/index.php/s/FYhSU6icibEEFr2/download"
 ["ubuntu-18.04-live-server-amd64.iso"]="https://owncloud.tech-hell.com:8444/index.php/s/5OehYpFeJ1xMl32/download"
+["OracleLinux-R7-U9-Server-x86_64-dvd.iso"]="https://owncloud.tech-hell.com:8444/index.php/s/n2vGK0aUekfG9VQ/download"
 )
 
 iso_tasks=(
@@ -29,6 +44,7 @@ iso_tasks=(
 ["ubuntu-16.04.1-server-amd64.iso"]="ubuntu/xenial"
 ["ubuntu-18.04-desktop-amd64.iso"]="ubuntu/bionic"
 ["ubuntu-18.04-live-server-amd64.iso"]="ubuntu/bionic"
+["OracleLinux-R7-U9-Server-x86_64-dvd.iso"]="centos/7"
 )
 
 ###########################################
@@ -204,27 +220,28 @@ function create_tags() {
     # register host tags
     #####################################################
     
-    tags=$(curl -s http://localhost:8150/api/collections/tags | jq -r '.items[].name')
+    razor_tags=$(curl -s http://localhost:8150/api/collections/tags | jq -r '.items[].name')
     
-    test_hosts_tag_found=0
-    
-    for tag in ${tags[@]}
+    # for each k/v pair
+    for tag in "${!tags[@]}"
     do
-        if [[ "${tag}" == "test-hosts" ]]
-        then
-            test_hosts_tag_found=1
+        # determine if the razor tag has already been created
+        tag_found=0
+        for razor_tag in ${razor_tags[@]}
+        do
+            tag_found=1
             break
+        done
+
+        if [[ ${repo_found} -eq 1 ]]
+        then
+            echo "test-hosts tag already exists... updating"
+            razor update-tag-rule --name test-hosts --rule "${tags[${tag}]}" --force
+        else
+            echo "test-hosts tag does not exist... creating"
+            razor create-tag --name test-hosts --rule "${tags[${tag}]}"
         fi
     done
-    
-    if [[ ${test_hosts_tag_found} -eq 0 ]]
-    then
-        echo "test-hosts tag does not exist... creating"
-        razor create-tag --name test-hosts --rule "${test_hosts_filter}"
-    else
-        echo "test-hosts tag already exists... updating"
-        razor update-tag-rule --name test-hosts --rule "${test_hosts_filter}" --force
-    fi
 }
 
 
