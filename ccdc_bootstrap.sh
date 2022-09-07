@@ -270,11 +270,11 @@ function create_tags() {
 
         if [[ ${tag_found} -eq 1 ]]
         then
-            echo "test-hosts tag already exists... updating"
-            razor update-tag-rule --name test-hosts --rule "${tags[${tag}]}" --force
+            echo "${tag} tag already exists... updating"
+            razor update-tag-rule --name "${tag}" --rule "${tags[${tag}]}" --force
         else
-            echo "test-hosts tag does not exist... creating"
-            razor create-tag --name test-hosts --rule "${tags[${tag}]}"
+            echo "${tag} tag does not exist... creating"
+            razor create-tag --name "${tag}" --rule "${tags[${tag}]}"
         fi
     done
 }
@@ -300,9 +300,9 @@ function destroy_tags() {
 
         if [[ ${tag_found} -eq 0 ]]
         then
-            echo "test-hosts tag does not exist... skipping"
+            echo "${tag} tag does not exist... skipping"
         else
-            razor delete-tag test-hosts
+            razor delete-tag "${tag}"
         fi
     done
 }
