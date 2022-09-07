@@ -268,7 +268,7 @@ function create_tags() {
             break
         done
 
-        if [[ ${repo_found} -eq 1 ]]
+        if [[ ${tag_found} -eq 1 ]]
         then
             echo "test-hosts tag already exists... updating"
             razor update-tag-rule --name test-hosts --rule "${tags[${tag}]}" --force
@@ -287,23 +287,24 @@ function destroy_tags() {
 
     tags=$(curl -s http://localhost:8150/api/collections/tags | jq -r '.items[].name')
 
-    test_hosts_tag_found=0
-
-    for tag in ${tags[@]}
+    # for each k/v pair
+    for tag in "${!tags[@]}"
     do
-        if [[ "${tag}" == "test-hosts" ]]
-        then
-            test_hosts_tag_found=1
+        # determine if the razor tag has already been created
+        tag_found=0
+        for razor_tag in ${razor_tags[@]}
+        do
+            tag_found=1
             break
+        done
+
+        if [[ ${tag_found} -eq 0 ]]
+        then
+            echo "test-hosts tag does not exist... skipping"
+        else
+            razor delete-tag test-hosts
         fi
     done
-
-    if [[ ${test_hosts_tag_found} -eq 0 ]]
-    then
-        echo "test-hosts tag does not exist... skipping"
-    else
-        razor delete-tag test-hosts
-    fi
 }
 
 
