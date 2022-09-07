@@ -57,7 +57,7 @@ iso_tasks=(
 ["ubuntu-16.04.1-server-amd64.iso"]="ubuntu/xenial"
 ["ubuntu-18.04-desktop-amd64.iso"]="ubuntu/bionic"
 ["ubuntu-18.04-live-server-amd64.iso"]="ubuntu/bionic"
-["OracleLinux-R7-U9-Server-x86_64-dvd.iso"]="centos/7"
+["OracleLinux-R7-U9-Server-x86_64-dvd.iso"]="oracle/7"
 )
 
 
@@ -79,7 +79,7 @@ declare -A policies=()
 declare -a policy_names=()
 
 addPolicy "test-hosts" "ubuntu-16.04.1-server-amd64" "ubuntu/xenial" "noop" "test-hosts" '&QP-t]5$xrTkdiyx'
-addPolicy "opennebula" "OracleLinux-R7-U9-Server-x86_64-dvd" "redhat/7" "noop" "opennebula" '&QP-t]5$xrTkdiyx'
+addPolicy "opennebula" "OracleLinux-R7-U9-Server-x86_64-dvd" "oracle/7" "noop" "opennebula" '&QP-t]5$xrTkdiyx'
 
 
 ###########################################
