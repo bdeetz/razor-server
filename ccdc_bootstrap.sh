@@ -21,16 +21,26 @@
 
 
 ###########################################
+# HELPER FUNCTIONS
+###########################################
+function addPolicy() {
+  policy_names+=("$1")
+  policies["$1_repo"]="$2"
+  policies["$1_task"]="$3"
+  policies["$1_broker"]="$4"
+  policies["$1_tag"]="$5"
+  policies["$1_root_password"]="$6"  
+}
+
+
+###########################################
 # CONFIGURATION
 ###########################################
-tags=(
-["test-hosts"]='["in", ["fact", "macaddress"], "00:0c:29:f8:23:bf", "00:0c:29:f8:23:c0"]'
-)
 
 declare -A iso_urls
-declare -A iso_tasks
 
 # k/v of filenames and download urls for isos
+# repos names are the name of this key with .iso removed from the key
 iso_urls=(
 ["ubuntu-16.04.1-desktop-amd64.iso"]="https://owncloud.tech-hell.com:8444/index.php/s/q35kklGQHh8UnuX/download"
 ["ubuntu-16.04.1-server-amd64.iso"]="https://owncloud.tech-hell.com:8444/index.php/s/NdvfibI06WdvTbi/download"
@@ -39,6 +49,9 @@ iso_urls=(
 ["OracleLinux-R7-U9-Server-x86_64-dvd.iso"]="https://owncloud.tech-hell.com:8444/index.php/s/n2vGK0aUekfG9VQ/download"
 )
 
+
+declare -A iso_tasks
+
 iso_tasks=(
 ["ubuntu-16.04.1-desktop-amd64.iso"]="ubuntu/xenial"
 ["ubuntu-16.04.1-server-amd64.iso"]="ubuntu/xenial"
@@ -46,6 +59,28 @@ iso_tasks=(
 ["ubuntu-18.04-live-server-amd64.iso"]="ubuntu/bionic"
 ["OracleLinux-R7-U9-Server-x86_64-dvd.iso"]="centos/7"
 )
+
+
+declare -A tags
+
+tags=(
+["test-hosts"]='["in", ["fact", "macaddress"], "00:0c:29:f8:23:bf", "00:0c:29:f8:23:c0"]'
+["opennebula"]='["in", ["fact", "macaddress"], "00:0c:29:e6:f1:07"]'
+)
+
+###################################
+# WARNING!!!!!!!!
+#
+# This contains a secret that is no big deal if it gets leaked because it is for demo purposes.
+# If you intend on using a real secret, you better use a secret manager and pull it from there rather
+# than commit it to a public repo
+###################################
+declare -A policies=()
+declare -a policy_names=()
+
+addPolicy "test-hosts" "ubuntu-16.04.1-server-amd64" "ubuntu/xenial" "noop" "test-hosts" '&QP-t]5$xrTkdiyx'
+addPolicy "opennebula" "OracleLinux-R7-U9-Server-x86_64-dvd" "redhat/7" "noop" "opennebula" '&QP-t]5$xrTkdiyx'
+
 
 ###########################################
 # CLI ARGUMENT FLAGS - DO NOT MODIFY!!!!
@@ -229,17 +264,20 @@ function create_tags() {
         tag_found=0
         for razor_tag in ${razor_tags[@]}
         do
-            tag_found=1
-            break
+            if [[ "${razor_tag}" == "${tag}" ]]
+            then
+                tag_found=1
+                break
+            fi
         done
 
-        if [[ ${repo_found} -eq 1 ]]
+        if [[ ${tag_found} -eq 1 ]]
         then
-            echo "test-hosts tag already exists... updating"
-            razor update-tag-rule --name test-hosts --rule "${tags[${tag}]}" --force
+            echo "${tag} tag already exists... updating"
+            razor update-tag-rule --name "${tag}" --rule "${tags[${tag}]}" --force
         else
-            echo "test-hosts tag does not exist... creating"
-            razor create-tag --name test-hosts --rule "${tags[${tag}]}"
+            echo "${tag} tag does not exist... creating"
+            razor create-tag --name "${tag}" --rule "${tags[${tag}]}"
         fi
     done
 }
@@ -252,23 +290,27 @@ function destroy_tags() {
 
     tags=$(curl -s http://localhost:8150/api/collections/tags | jq -r '.items[].name')
 
-    test_hosts_tag_found=0
-
-    for tag in ${tags[@]}
+    # for each k/v pair
+    for tag in "${!tags[@]}"
     do
-        if [[ "${tag}" == "test-hosts" ]]
+        # determine if the razor tag has already been created
+        tag_found=0
+        for razor_tag in ${razor_tags[@]}
+        do
+            if [[ "${razor_tag}" == "${tag}" ]]
+            then
+                tag_found=1
+                break
+            fi
+        done
+
+        if [[ ${tag_found} -eq 0 ]]
         then
-            test_hosts_tag_found=1
-            break
+            echo "${tag} tag does not exist... skipping"
+        else
+            razor delete-tag "${tag}"
         fi
     done
-
-    if [[ ${test_hosts_tag_found} -eq 0 ]]
-    then
-        echo "test-hosts tag does not exist... skipping"
-    else
-        razor delete-tag test-hosts
-    fi
 }
 
 
@@ -276,28 +318,30 @@ function create_policies() {
     #######################################################
     # create policies
     #######################################################
-    
-    policies=$(curl -s http://localhost:8150/api/collections/policies | jq -r '.items[].name')
-    
-    test_hosts_policy_found=0
-    
-    for policy in ${policies[@]}
-    do
-        if [[ "${policy}" == "test-hosts" ]]
+
+    razor_policies=$(curl -s http://localhost:8150/api/collections/policies | jq -r '.items[].name')
+
+    # for each k/v pair
+    for policy in "${policy_names[@]}"; do
+        # determine if the razor tag has already been created
+        policy_found=0
+        for razor_policy in ${razor_policies[@]}
+        do
+            if [[ "${razor_policy}" == "${policy}" ]]
+            then
+                policy_found=1
+                break
+            fi
+        done
+
+
+        if [[ ${policy_found} -eq 0 ]]
         then
-            test_hosts_policy_found=1
-            break
+            echo "${policy} policy does not exist... creating"
+
+            razor create-policy --name "${policy}" --repo "${policies[${policy}_repo]}" --task "${policies[${policy}_task]}" --broker "${policies[${policy}_broker]}" --enabled --max-count=100 --tag "${policies[${policy}_tag]}" --hostname 'host${id}' --root-password "${policies[${policy}_root_password]}"
         fi
     done
-    
-    if [[ ${test_hosts_policy_found} -eq 0 ]]
-    then
-        echo "test-hosts policy does not exist... creating"
-    
-        # note that this contains a password in a public repo. As a result
-        # be sure your configuration code changes this secret
-        razor create-policy --name "test-hosts" --repo "ubuntu-16.04.1-server-amd64" --task "ubuntu/xenial" --broker "noop" --enabled --max-count=100 --tag "test-hosts" --hostname 'host${id}' --root-password '&QP-t]5$xrTkdiyx'
-    fi
 }
 
 
@@ -306,25 +350,30 @@ function destroy_policies() {
     # create policies
     #######################################################
 
-    policies=$(curl -s http://localhost:8150/api/collections/policies | jq -r '.items[].name')
 
-    test_hosts_policy_found=0
+    razor_policies=$(curl -s http://localhost:8150/api/collections/policies | jq -r '.items[].name')
 
-    for policy in ${policies[@]}
-    do
-        if [[ "${policy}" == "test-hosts" ]]
+    # for each k/v pair
+    for policy in "${policy_names[@]}"; do
+        # determine if the razor tag has already been created
+        policy_found=0
+        for razor_policy in ${razor_policies[@]}
+        do
+            if [[ "${razor_policy}" == "${policy}" ]]
+            then
+                policy_found=1
+                break
+            fi
+        done
+
+
+        if [[ ${policy_found} -eq 0 ]]
         then
-            test_hosts_policy_found=1
-            break
+            echo "${policy} policy does not exist... skipping"
+        else
+            razor delete-policy "${policy}"
         fi
     done
-
-    if [[ ${test_hosts_policy_found} -eq 0 ]]
-    then
-        echo "test-hosts policy does not exist... skipping"
-    else
-        razor delete-policy test-hosts
-    fi
 }
 
 
