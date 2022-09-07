@@ -339,7 +339,7 @@ function create_policies() {
         then
             echo "${policy} policy does not exist... creating"
 
-            razor create-policy --name "${policy}" --repo "${policies[${policy}_repo]}" --task "${policies[${policy}_task]}" --broker "${policies[${policy}_broker]}" --enabled --max-count=100 --tag "${policies[${police}_tag]}" --hostname 'host${id}' --root-password "${policies[${policy}_root_password]}"
+            razor create-policy --name "${policy}" --repo "${policies[${policy}_repo]}" --task "${policies[${policy}_task]}" --broker "${policies[${policy}_broker]}" --enabled --max-count=100 --tag "${policies[${policy}_tag]}" --hostname 'host${id}' --root-password "${policies[${policy}_root_password]}"
         fi
     done
 }
