@@ -1,0 +1,6 @@
+---
+
+os_version: 7
+label: Oracle Linux 7
+description: Oracle Linux 7 installer
+base: oracle
