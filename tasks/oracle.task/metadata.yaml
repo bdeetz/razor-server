@@ -1,0 +1,8 @@
+---
+
+os_version: 7
+label: Oracle Linux 7
+description: Oracle Linux Generic installer
+boot_sequence:
+  1: boot_install
+  default: boot_local
