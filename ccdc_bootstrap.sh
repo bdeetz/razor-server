@@ -264,8 +264,11 @@ function create_tags() {
         tag_found=0
         for razor_tag in ${razor_tags[@]}
         do
-            tag_found=1
-            break
+            if [[ "${razor_tag}" == "${tag}" ]]
+            then
+                tag_found=1
+                break
+            fi
         done
 
         if [[ ${tag_found} -eq 1 ]]
@@ -294,8 +297,11 @@ function destroy_tags() {
         tag_found=0
         for razor_tag in ${razor_tags[@]}
         do
-            tag_found=1
-            break
+            if [[ "${razor_tag}" == "${tag}" ]]
+            then
+                tag_found=1
+                break
+            fi
         done
 
         if [[ ${tag_found} -eq 0 ]]
@@ -319,10 +325,13 @@ function create_policies() {
     for policy in "${policy_names[@]}"; do
         # determine if the razor tag has already been created
         policy_found=0
-        for policy in ${razor_policies[@]}
+        for razor_policy in ${razor_policies[@]}
         do
-            policy_found=1
-            break
+            if [[ "${razor_policy}" == "${policy}" ]]
+            then
+                policy_found=1
+                break
+            fi
         done
 
 
@@ -348,10 +357,13 @@ function destroy_policies() {
     for policy in "${policy_names[@]}"; do
         # determine if the razor tag has already been created
         policy_found=0
-        for policy in ${razor_policies[@]}
+        for razor_policy in ${razor_policies[@]}
         do
-            policy_found=1
-            break
+            if [[ "${razor_policy}" == "${policy}" ]]
+            then
+                policy_found=1
+                break
+            fi
         done
 
 
