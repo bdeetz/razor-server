@@ -288,7 +288,7 @@ function destroy_tags() {
     # register host tags
     #####################################################
 
-    tags=$(curl -s http://localhost:8150/api/collections/tags | jq -r '.items[].name')
+    razor_tags=$(curl -s http://localhost:8150/api/collections/tags | jq -r '.items[].name')
 
     # for each k/v pair
     for tag in "${!tags[@]}"
