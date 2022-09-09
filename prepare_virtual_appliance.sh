@@ -26,6 +26,9 @@ then
   echo "you should run 'diff ./ccdc_bootstrap.sh /mnt/repo-store/ccdc_bootstrap.sh'"
   echo "to determine if you would like to update the bootstrap file at /mnt/repo-store/ccdc_bootstrap.sh"
   echo "with the version in this repo."
+  echo ""
+  echo ""
+  echo ""
 fi
 
 diff ./bootstrap.ipxe /mnt/repo-store/bootstrap.ipxe
@@ -39,4 +42,7 @@ then
   echo "you should run 'diff ./bootstrap.ipxe /mnt/repo-store/bootstrap.ipxe'"
   echo "to determine if you would like to update the bootstrap file at /mnt/repo-store/bootstrap.ipxe"
   echo "with the version in this repo."
+  echo ""
+  echo ""
+  echo ""
 fi
