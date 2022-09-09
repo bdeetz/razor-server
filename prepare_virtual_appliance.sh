@@ -7,7 +7,7 @@ cwd=$(pwd)
 
 # cleanup repo-store
 cd /mnt/repo-store/
-rm -v !("ccdc_bootstrap.sh"|"bootstrap.ipxe")
+find /mnt/repo-store/ -not \( -name 'bootstrap.ipxe' -or -name 'microkernel.tar' \) -delete
 
 cd ${cwd}
 
