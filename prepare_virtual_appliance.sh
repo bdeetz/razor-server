@@ -46,3 +46,7 @@ then
   echo ""
   echo ""
 fi
+
+docker system prune -a
+
+docker build . -t puppet-razor:latest
