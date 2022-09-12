@@ -45,8 +45,8 @@ iso_urls=(
 ["ubuntu-16.04.1-desktop-amd64.iso"]="https://owncloud.tech-hell.com:8444/index.php/s/q35kklGQHh8UnuX/download"
 ["ubuntu-16.04.1-server-amd64.iso"]="https://owncloud.tech-hell.com:8444/index.php/s/NdvfibI06WdvTbi/download"
 ["ubuntu-18.04-desktop-amd64.iso"]="https://owncloud.tech-hell.com:8444/index.php/s/FYhSU6icibEEFr2/download"
-["ubuntu-18.04-live-server-amd64.iso"]="https://owncloud.tech-hell.com:8444/index.php/s/5OehYpFeJ1xMl32/download"
 ["OracleLinux-R7-U9-Server-x86_64-dvd.iso"]="https://owncloud.tech-hell.com:8444/index.php/s/n2vGK0aUekfG9VQ/download"
+["ubuntu-18.04.6-server-amd64.iso"]="https://cdimage.ubuntu.com/releases/18.04/release/ubuntu-18.04.6-server-amd64.iso"
 )
 
 
@@ -58,6 +58,7 @@ iso_tasks=(
 ["ubuntu-18.04-desktop-amd64.iso"]="ubuntu/bionic"
 ["ubuntu-18.04-live-server-amd64.iso"]="ubuntu/bionic"
 ["OracleLinux-R7-U9-Server-x86_64-dvd.iso"]="oracle/7"
+["ubuntu-18.04.6-server-amd64.iso"]="ubuntu/bionic"
 )
 
 
@@ -66,6 +67,7 @@ declare -A tags
 tags=(
 ["test-hosts"]='["in", ["fact", "macaddress"], "00:0c:29:f8:23:bf", "00:0c:29:f8:23:c0"]'
 ["opennebula"]='["in", ["fact", "macaddress"], "00:0c:29:e6:f1:07"]'
+["bionic-server"]='["in", ["fact", "macaddress"], "00:0c:29:98:d5:74"]'
 )
 
 ###################################
@@ -80,6 +82,7 @@ declare -a policy_names=()
 
 addPolicy "test-hosts" "ubuntu-16.04.1-server-amd64" "ubuntu/xenial" "noop" "test-hosts" '&QP-t]5$xrTkdiyx'
 addPolicy "opennebula" "OracleLinux-R7-U9-Server-x86_64-dvd" "oracle/7" "noop" "opennebula" '&QP-t]5$xrTkdiyx'
+addPolicy "bionic-server" "ubuntu-18.04.6-server-amd64" "ubuntu/bionic" "noop" "bionic-server" '&QP-t]5$xrTkdiyx'
 
 
 ###########################################
