@@ -6,7 +6,7 @@ EXPOSE 8150/tcp
 
 # install postgresql
 RUN apk update
-RUN apk add postgresql postgresql-client
+RUN apk add postgresql postgresql-client git
 
 USER postgres
 
@@ -36,6 +36,21 @@ COPY spec ./spec
 COPY tasks ./tasks
 
 #COPY . .
+
+# install razor client
+USER root
+RUN mkdir /build-dir \
+  && chown postgres:postgres /build-dir
+USER postgres
+WORKDIR /build-dir
+RUN git clone https://github.com/bdeetz/razor-client.git \
+  && cd razor-client \
+  && gem build razor-client.gemspec \
+  && gem install ./razor-client-.gem
+
+# configure postgres access to razor server
+#USER postgres
+WORKDIR /usr/src/app
 
 USER root
 
@@ -117,8 +132,8 @@ RUN rm -rf /var/tftpboot && ln -s /var/lib/razor/repo-store /var/tftpboot && cho
 USER postgres
 
 # install razor client
-RUN gem install faraday -v 0.17.4
-RUN gem install razor-client
+#RUN gem install faraday -v 0.17.4
+#RUN gem install razor-client
 
 USER root
 COPY bin ./bin
