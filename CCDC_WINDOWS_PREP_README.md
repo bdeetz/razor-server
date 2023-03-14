@@ -1,4 +1,12 @@
 # building a windows iso for razor
+## SUMARY
+The installation of windows via PXE requires some additional tooling not required by a Linux install. The general steps are:
+1. add a default route to your dhcp server's offers
+2. convert the udf formatted windows iso  to iso-13346
+3. add device drivers to boot.wim
+4. add device drivers to install.wim
+5. create a samba share for win pe to pull installer artifacts from
+
 ## add default gateway config to the dhcp server's config
 within /etc/dhcp/dhcpd.conf ensure the subnet defintion for the dhcp pool contains:
 `option routers 10.66.0.1;`
